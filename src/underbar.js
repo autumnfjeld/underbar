@@ -43,10 +43,23 @@ var _ = { };
 
   // Returns the index at which value can be found in the array, or -1 if value
   // is not present in the array.
+  // TIP: Here's an example of a function that needs to iterate, which we've
+  // implemented for you. Instead of using a standard `for` loop, though,
+  // it uses the iteration helper `each`, which you will need to write.
+
   _.indexOf = function(array, target){
-    // TIP: Here's an example of a function that needs to iterate, which we've
-    // implemented for you. Instead of using a standard `for` loop, though,
-    // it uses the iteration helper `each`, which you will need to write.
+    console.log("IN indexOf function. array:",array,"target: ",target);
+    var result = false;
+    _.each(array,
+      function(value,index){
+        console.log('value is',value, 'target is' ,target);
+        if (value == target && result == false){ 
+          result = index; 
+        }
+      }
+    );
+    if (result == false) return -1;
+    return result;
   };
 
   // Return all elements of an array that pass a truth test.
