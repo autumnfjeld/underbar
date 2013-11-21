@@ -48,11 +48,9 @@ var _ = { };
   // it uses the iteration helper `each`, which you will need to write.
 
   _.indexOf = function(array, target){
-    console.log("IN indexOf function. array:",array,"target: ",target);
     var result = false;
     _.each(array,
       function(value,index){
-        console.log('value is',value, 'target is' ,target);
         if (value == target && result == false){ 
           result = index; 
         }
@@ -64,6 +62,15 @@ var _ = { };
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, iterator) {
+    var result = [];
+    if (collection == null) return result;
+    _.each(collection, 
+      function(value){
+        console.log('value=',value);
+        if (iterator(value)) result.push(value);
+      }
+    );
+    return result;
   };
 
   // Return all elements of an array that don't pass a truth test.
