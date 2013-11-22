@@ -61,22 +61,28 @@ var _ = { };
   };
 
   // Return all elements of an array that pass a truth test.
+  // not sure why iterator.call doesn't work here......
   _.filter = function(collection, iterator) {
     var result = [];
     if (collection == null) return result;
     _.each(collection, 
-      function(value){
-        console.log('value=',value);
-        if (iterator(value)) result.push(value);
+      function(value, index, list){
+        if (iterator(value, index, list)) result.push(value);
       }
     );
+    console.log(result);
     return result;
   };
 
   // Return all elements of an array that don't pass a truth test.
+  // TIP: see if you can re-use _.select()=_.filter() here, without simply
+  // copying code in and modifying it
   _.reject = function(collection, iterator) {
-    // TIP: see if you can re-use _.select() here, without simply
-    // copying code in and modifying it
+    return _.filter(collection, 
+      function(value, index, list){              //want this function to return a true if this iterator is false
+        return !iterator(value, index, list);  
+      }
+   );
   };
 
   // Produce a duplicate-free version of the array.
