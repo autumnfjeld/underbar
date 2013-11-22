@@ -32,6 +32,7 @@ var _ = { };
   // Call iterator(value, key, collection) for each element of collection.
   // Accepts both arrays and objects.
   _.each = function(collection, iterator) {
+    if (collection == null) return;
     if (Array.isArray(collection)) {
       for ( var i = 0; i < collection.length ; i++)
         iterator(collection[i], i, collection);
@@ -70,7 +71,6 @@ var _ = { };
         if (iterator(value, index, list)) result.push(value);
       }
     );
-    console.log(result);
     return result;
   };
 
@@ -86,7 +86,19 @@ var _ = { };
   };
 
   // Produce a duplicate-free version of the array.
+  // Should I be using help predefined functions?
   _.uniq = function(array) {
+    var result = [];
+    var duplicate = false;
+    for ( var i = 0; i < array.length; i++ ) {
+      duplicate = false;
+      for ( var j = 0; j < result.length; j++ ) {
+        if (array[i] == result[j]) duplicate = true; 
+      }
+      if (!duplicate) result.push(array[i]);
+    }
+    console.log("RESULT", result);
+    return result;
   };
 
 
