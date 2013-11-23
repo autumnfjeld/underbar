@@ -35,11 +35,10 @@ var _ = { };
     if (collection == null) return;
     if (Array.isArray(collection)) {
       for ( var i = 0; i < collection.length ; i++)
-        iterator(collection[i], i, collection);
-    }
+        iterator.call(this, collection[i], i, collection);}
     else
       for ( var prop in collection)
-        iterator(collection[prop], prop, collection);
+        iterator.call(this, collection[prop], prop, collection);
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
@@ -68,7 +67,7 @@ var _ = { };
     if (collection == null) return result;
     _.each(collection, 
       function(value, index, list){
-        if (iterator(value, index, list)) result.push(value);
+        if (iterator.call(this, value, index, list)) result.push(value);
       }
     );
     return result;
@@ -80,7 +79,7 @@ var _ = { };
   _.reject = function(collection, iterator) {
     return _.filter(collection, 
       function(value, index, list){              //want this function to return a true if this iterator is false
-        return !iterator(value, index, list);  
+        return !iterator.call(this, value, index, list);  
       }
    );
   };
@@ -97,10 +96,8 @@ var _ = { };
       }
       if (!duplicate) result.push(array[i]);
     }
-    console.log("RESULT", result);
     return result;
   };
-
 
   // Return the results of applying an iterator to each element.
   // map() is a useful primitive iteration function that works a lot
@@ -109,7 +106,7 @@ var _ = { };
   _.map = function(array, iterator) {
     var result = [];
     _.each(array,function(value, item, array) {
-        result.push(iterator(value, item, array));
+        result.push(iterator.call(this, value, item, array));
     });
     return result;
   };
@@ -124,9 +121,6 @@ var _ = { };
   // a certain property in it. E.g. take an array of people and return
   // an array of just their ages
   _.pluck = function(array, propertyName) {
-    // TIP: map is really handy when you want to transform an array of
-    // values into a new array of values. _.pluck() is solved for you
-    // as an example of this.
     return _.map(array, function(value){
       return value[propertyName];
     });
