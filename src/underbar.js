@@ -169,17 +169,14 @@ var _ = { };
 
 
   // Determine whether all of the elements match a truth test.
-  _.every = function(collection, iterator) {
-    if (iterator == null) return true;            // Aut: Not sure this is correct
-    console.log('START',collection,iterator);
-// stay true until false is returned
+  // TIP: Try re-using reduce() here.
+    _.every = function(collection, iterator) { 
+    if (iterator == null) return true;              // Aut: Cheating?!?!
     return _.reduce(collection,function(check,value) {
-      console.log("EACH ITERATION: check",check);
       if (!iterator(value)) return false; 
       return check;
     }, true);
-    // TIP: Try re-using reduce() here.
-  };
+   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
