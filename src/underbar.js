@@ -36,9 +36,9 @@ var _ = { };
     if (Array.isArray(collection)) {
       for ( var i = 0; i < collection.length ; i++)
         iterator.call(this, collection[i], i, collection);}
-    else
+    else {
       for ( var prop in collection)
-        iterator.call(this, collection[prop], prop, collection);
+        iterator.call(this, collection[prop], prop, collection) };
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
@@ -127,6 +127,7 @@ var _ = { };
   };
 
   // Calls the method named by methodName on each value in the list.
+  // SO DON"T RETURN ANYTHING???
   _.invoke = function(list, methodName, args) {
   };
 
@@ -144,6 +145,14 @@ var _ = { };
   //   }, 0); // should be 6
   //
   _.reduce = function(collection, iterator, initialValue) {
+    if (collection == null) return;
+    var previousValue = initialValue;
+    if (previousValue == null) previousValue = 0;   // Aut: This is wrong. WHat should generic starting value be?
+    _.each(collection,function(value, index, list) {
+      previousValue = iterator(previousValue,value)
+      }
+    );
+    return previousValue;
   };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -161,6 +170,14 @@ var _ = { };
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
+    if (iterator == null) return true;            // Aut: Not sure this is correct
+    console.log('START',collection,iterator);
+// stay true until false is returned
+    return _.reduce(collection,function(check,value) {
+      console.log("EACH ITERATION: check",check);
+      if (!iterator(value)) return false; 
+      return check;
+    }, true);
     // TIP: Try re-using reduce() here.
   };
 
