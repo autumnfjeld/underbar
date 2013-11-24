@@ -34,11 +34,14 @@ var _ = { };
   _.each = function(collection, iterator) {
     if (collection == null) return;
     if (Array.isArray(collection)) {
-      for ( var i = 0; i < collection.length ; i++)
-        iterator.call(this, collection[i], i, collection);}
+      for ( var i = 0; i < collection.length ; i++) {
+        iterator.call(this, collection[i], i, collection);
+      }
+    }
     else {
       for ( var prop in collection)
-        iterator.call(this, collection[prop], prop, collection) };
+        iterator.call(this, collection[prop], prop, collection) 
+    };
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
@@ -149,16 +152,16 @@ var _ = { };
     var previousValue = initialValue;
     if (previousValue == null) previousValue = 0;   // Aut: This is wrong. WHat should generic starting value be?
     _.each(collection,function(value, index, list) {
-      previousValue = iterator(previousValue,value)
+      previousValue = iterator.call(this,previousValue,value);
       }
     );
     return previousValue;
   };
 
   // Determine if the array or object contains a given value (using `===`).
+  // TIP: Many iteration problems can be most easily expressed in
+  // terms of reduce(). Here's a freebie to demonstrate!
   _.contains = function(collection, target) {
-    // TIP: Many iteration problems can be most easily expressed in
-    // terms of reduce(). Here's a freebie to demonstrate!
     return _.reduce(collection, function(wasFound, item) {
       if(wasFound) {
         return true;
@@ -167,21 +170,32 @@ var _ = { };
     }, false);
   };
 
-
   // Determine whether all of the elements match a truth test.
   // TIP: Try re-using reduce() here.
+  // by using reduce the whole list is tested - wouldn't it be better to exit on finding a false?
     _.every = function(collection, iterator) { 
-    if (iterator == null) return true;              // Aut: Cheating?!?!
-    return _.reduce(collection,function(check,value) {
-      if (!iterator(value)) return false; 
-      return check;
+      var count = 0;
+      if (collection === null) 
+        throw new TypeError('_.every called on null or undefined');
+      if (iterator == null) return true;                  // Aut: this could be handled better
+      return _.reduce(collection,function(check, value) {
+         if (!iterator.call(this, value)) return false;              // if !false, return false, each keeps looping, & check = false in next iteration
+        return check;     // returning the 'previous value'
+        count ++;
     }, true);
    };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
+  // TIP: There's a very clever way to re-use every() here.  
+  // if the iterator is true then trigger the 'return false' switch in _.every
   _.some = function(collection, iterator) {
-    // TIP: There's a very clever way to re-use every() here.
+    if (collection == null) return false;
+    if (iterator == null) 
+      iterator = function(value) { return value};
+    return !_.every(collection,function(value) {
+      return !iterator.call(this, value); 
+    });
   };
 
 
