@@ -221,12 +221,41 @@ var _ = { };
   //   }, {
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
-  _.extend = function(obj) {
+ _.extend = function(obj) {
+    var args = Array.prototype.slice.call(arguments);
+    var newObj = obj;
+    _.each(args.slice(1),function(obj, index, list){
+      for (var key in obj)
+        newObj[key] = obj[key];
+    });
+    return newObj;
   };
+
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    //obj and first item of arguments don't match!!! weird!!!
+    //what is going on with 'word' ???
+    //console.log('**START** obj', obj,' arguments:',arguments, 'arguments[0]', arguments[0]);
+    var args = Array.prototype.slice.call(arguments);
+    var newObj = obj;
+    var isin = null;
+    _.each(args.slice(1),function(obj, index, list){
+      for (var key in obj) {
+        //console.log('working with object;', obj);
+        isin = key in newObj;
+        //console.log(isin);
+        //if (isin) console.log('already in ','key:',key, 'and obj[key]:',obj[key]);
+        if (!isin) {
+          //console.log('NOT already in ','key:',key, 'and obj[key]:',obj[key]);
+          newObj[key] = obj[key];
+        }
+        //console.log('our newObj is',newObj,'check word in newObj',newObj['word']);
+      }
+    });
+    //console.log("DONE",newObj)
+    return newObj;
   };
 
 
