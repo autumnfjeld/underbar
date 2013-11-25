@@ -39,7 +39,7 @@ var _ = { };
       }
     }
     else {
-      for ( var prop in collection)
+      for (var prop in collection)
         iterator.call(this, collection[prop], prop, collection) 
     };
   };
@@ -108,8 +108,8 @@ var _ = { };
   // the members, it also maintains an array of results.
   _.map = function(array, iterator) {
     var result = [];
-    _.each(array,function(value, item, array) {
-        result.push(iterator.call(this, value, item, array));
+    _.each(array,function(value, index, array) {
+        result.push(iterator.call(this,value, index, array));
     });
     return result;
   };
@@ -130,8 +130,12 @@ var _ = { };
   };
 
   // Calls the method named by methodName on each value in the list.
-  // SO DON"T RETURN ANYTHING???
+  // Items in list may be a new 'context', as method is part of an object
   _.invoke = function(list, methodName, args) {
+    var isFunc = typeof(methodName) == 'function';
+    return _.map(list,function(value, index, array){
+      return (isFunc ? methodName.apply(value,args) : value[methodName](args));
+    });
   };
 
   // Reduces an array or object to a single value by repetitively calling
