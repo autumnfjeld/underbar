@@ -295,7 +295,18 @@ var _ = { };
   // Memoize should return a function that when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
+  // Array.prototype.slice.apply(arguments) converts arguments into an ARRAY.
   _.memoize = function(func) {
+    var track = {};
+
+    return function() {
+      var arg = Array.prototype.slice.call(arguments);
+      var key = arg.toString();
+      if (!track[key]){
+        track[key] = func.apply(this,arg);
+      }
+      return track[key];
+    }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
