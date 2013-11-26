@@ -330,8 +330,41 @@ var _ = { };
    */
 
   // Shuffle an array.
+  // Remember how arrays are properly cloned!!! slice creates a shallow clone
+  // slice creates a close for numbers and strings
   _.shuffle = function(array) {
+    var shuffled = array.slice();
+    var cnt = shuffled.length, temp, rand;
+
+    while(cnt) {
+      rand = Math.floor(Math.random() * cnt); 
+      cnt--;
+      temp = shuffled[cnt];
+      shuffled[cnt] = shuffled[rand];
+      shuffled[rand] = temp;
+    } 
+    return shuffled;
   };
+
+  // -----  OR ---------
+
+  /*_.shuffle = function(array) {
+    console.log('array', array);
+    var rand;
+    var shuffled = [];
+
+    _.each(array, function(value, index) {
+      rand = Math.floor(Math.random() * index); 
+
+      shuffled[index] = shuffled[rand];
+      shuffled[rand] = value;
+      console.log('index:',index,'shuffled[index]',shuffled[index],'rand:',rand,'shuffled[rand]',shuffled[rand]);
+    }); 
+    console.log('SHUFF', shuffled);
+    return shuffled;
+    //return {sort: function() {}};
+  };  */
+
 
 
   /**
