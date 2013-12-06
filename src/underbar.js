@@ -247,7 +247,7 @@ var _ = { };
         //console.log('working with object;', obj);
         isin = key in newObj;
         //console.log(isin);
-        if (isin) console.log('already in ','key:',key, 'and obj[key]:',obj[key]);
+        //if (isin) console.log('already in ','key:',key, 'and obj[key]:',obj[key]);
         if (!isin) {
           //console.log('NOT already in ','key:',key, 'and obj[key]:',obj[key]);
           newObj[key] = obj[key];
@@ -466,9 +466,7 @@ var _ = { };
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
-    //console.log('in intersection',arguments);
     var args = Array.prototype.slice.call(arguments);
-    //console.log('in intersection...args',args);
     
     var array0 = args.shift();
     var result = [];
@@ -489,6 +487,19 @@ var _ = { };
   // Only the elements present in just the first array will remain.
   // Ahhhh, need to pass each array to _.intersection, not an array of arrays
   _.difference = function(array) {
+    if (!Array.isArray(array)) return "Not an array";
+    var args = Array.prototype.slice.call(arguments);
+    
+    var array0 = args.shift();
+    var result = _.filter(array0, function(item) {
+      var notin = true;
+      _.each(args, function(array){
+        if (_.contains(array,item)) notin = false;
+      });
+      return notin;
+
+    });
+    return result;
   }; 
   
 
