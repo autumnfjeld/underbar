@@ -64,7 +64,6 @@ var _ = { };
   };
 
   // Return all elements of an array that pass a truth test.
-  // not sure why iterator.call doesn't work here......
   _.filter = function(collection, iterator) {
     var result = [];
     if (collection == null) return result;
@@ -152,6 +151,7 @@ var _ = { };
   //   }, 0); // should be 6
   //
   _.reduce = function(collection, iterator, initialValue) {
+    //console.log('IN reduce. collection:',collection,collection[0].length);
     if (collection == null) return;
     var previousValue = initialValue;
     if (previousValue == null) previousValue = 0;   // Aut: This is wrong. WHat should generic starting value be?
@@ -192,7 +192,7 @@ var _ = { };
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   // TIP: There's a very clever way to re-use every() here.  
-  // if the iterator is true then trigger the 'return false' switch in _.every
+  // Aut: if the iterator is true then trigger the 'return false' switch in _.every
   _.some = function(collection, iterator) {
     if (collection == null) return false;
     if (iterator == null) 
@@ -235,9 +235,10 @@ var _ = { };
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
-    //obj and first item of arguments don't match!!! weird!!!
-    //what is going on with 'word' ???
-    //console.log('**START** obj', obj,' arguments:',arguments, 'arguments[0]', arguments[0]);
+    //obj and first item of arguments don't match!!! weird!!!  
+    //'twenty' and 'word' show up in first element when displaying arguments - WHY??
+    //console.log('**START** obj', obj,' arguments:',arguments);
+    //console.log('** arguments[0]', arguments[0], 'arguments[1]', arguments[1]);
     var args = Array.prototype.slice.call(arguments);
     var newObj = obj;
     var isin = null;
@@ -246,7 +247,7 @@ var _ = { };
         //console.log('working with object;', obj);
         isin = key in newObj;
         //console.log(isin);
-        //if (isin) console.log('already in ','key:',key, 'and obj[key]:',obj[key]);
+        if (isin) console.log('already in ','key:',key, 'and obj[key]:',obj[key]);
         if (!isin) {
           //console.log('NOT already in ','key:',key, 'and obj[key]:',obj[key]);
           newObj[key] = obj[key];
@@ -377,7 +378,41 @@ var _ = { };
   // If iterator is a string, sort objects by that property with the name
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
+  var lookupIterator = function(iterator) {
+    if (iterator == null) return iterator;  // see underscore lookupIterator
+    if (typeof(iterator) === 'function') return iterator;
+    return function(obj) {
+      return obj[iterator];
+    };
+  };
+
   _.sortBy = function(collection, iterator) {
+    //console.log('collection',collection,'iterator',iterator);
+    var sorted = [];
+    var hold = [];
+    
+    iterator = lookupIterator(iterator);
+
+    hold = _.map(collection,function(item, index, list) {
+        return {
+          'item' : item,
+          'index' : index,
+          'criteria' : iterator.call(this, item, index, list) };
+    });
+
+    sorted = _.pluck(hold.sort(function(a,b) {
+      var aTest = a.criteria;
+      var bTest = b.criteria
+      //console.log('CHECK a.criteria',a.criteria);
+      // void 0 always returns undefined, this handles our undefined problem!
+      if (aTest !== bTest) {
+        if (aTest > bTest || aTest === void 0) return 1;  
+        if (aTest < bTest || bTest === void 0) return -1;
+      }
+      return a.index - b.index;
+    }), 'item');
+
+    return sorted;
   };
 
   // Zip together two or more arrays with elements of the same index
@@ -386,6 +421,22 @@ var _ = { };
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
+    var args = Array.prototype.slice.call(arguments);
+    var subzip = [];
+    var zipped = [];
+
+    var len = _.reduce(args,function(prev,curr) {
+      return Math.max(prev,curr.length); 
+    }, 0);
+
+    for (var i = 0; i < len; i++) {
+      subzip = [];
+      for (var j = 0; j < args.length; j++) {
+        subzip.push(args[j][i]);
+      }
+      zipped.push(subzip);
+    }
+    return zipped;
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
@@ -393,6 +444,23 @@ var _ = { };
   //
   // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
+    if (!Array.isArray(nestedArray)) return null;
+    var flattened = [];
+    var item = null;
+    function getElements(array) {
+      var len = array.length;
+      for (var i = 0; i < len; i++) {
+        item = array[i];
+        if (Array.isArray(item)) {
+          getElements(item); 
+        }
+        else {   
+        flattened.push(item);
+        }
+      }
+    }    
+    getElements(nestedArray);
+    return flattened;
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
@@ -402,8 +470,10 @@ var _ = { };
 
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
+  // Ahhhh, need to pass each array to _.intersection, not an array of arrays
   _.difference = function(array) {
-  };
+  }; 
+  
 
 
   /**
