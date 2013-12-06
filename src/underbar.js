@@ -447,18 +447,16 @@ var _ = { };
     if (!Array.isArray(nestedArray)) return null;
     var flattened = [];
     var item = null;
-    function getElements(array) {
-      var len = array.length;
-      for (var i = 0; i < len; i++) {
-        item = array[i];
-        if (Array.isArray(item)) {
-          getElements(item); 
-        }
-        else {   
-        flattened.push(item);
-        }
+
+    function getElements(item) {
+      if (Array.isArray(item)) {
+        _.each(item,getElements);
       }
-    }    
+      else {   
+        flattened.push(item);
+      }
+    }
+
     getElements(nestedArray);
     return flattened;
   };
